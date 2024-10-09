@@ -16,13 +16,12 @@ public class UIManager : Singleton<UIManager>
     private Dictionary<Type, UIBase> _closedUIDict = new Dictionary<Type, UIBase>();
 
     // 가장 앞에 나와있는 UI
-    [SerializeField]private UIBase _frontUI;
+    [SerializeField] private UIBase _frontUI;
 
-    [SerializeField]private int _frontIndex;
+    [SerializeField] private int _frontIndex;
 
     protected override void Init()
     {
-        _isDontDestroy = true;
         _frontIndex = OpenedUITrs.transform.childCount - 1;
 
         base.Init();
@@ -50,7 +49,7 @@ public class UIManager : Singleton<UIManager>
         }
         else
         {
-            ui = Instantiate(Resources.Load<UIBase>($"Prefabs/UI/{type}"));            
+            ui = Instantiate(Resources.Load<UIBase>($"Prefabs/UI/{type}"));
         }
 
         return ui;
@@ -75,7 +74,7 @@ public class UIManager : Singleton<UIManager>
         _frontUI = ui;
         ui.gameObject.SetActive(true);
         ui.Setup(data, anchor);
-        ui.transform.SetSiblingIndex(_frontIndex);        
+        ui.transform.SetSiblingIndex(_frontIndex);
 
         return ui as T;
     }
@@ -86,6 +85,12 @@ public class UIManager : Singleton<UIManager>
     /// <param name="ui">UIBase에서 호출하기 때문에 왠만하면 this를 넘긴다.</param>
     public void CloseUI(UIBase ui)
     {
+        if (ui == null)
+        {
+            Debug.Log("모든 UI가 다 닫혔습니다.");
+            return;
+        }
+
         Type uiType = ui.GetType();
         Debug.Log(uiType);
 
@@ -98,7 +103,7 @@ public class UIManager : Singleton<UIManager>
         ui.gameObject.SetActive(false);
         ui.transform.SetParent(ClosedUITrs);
         _openedUIDict.Remove(uiType);
-        _closedUIDict.Add(uiType , ui);
+        _closedUIDict.Add(uiType, ui);
         _frontIndex--;
 
         var lastUI = OpenedUITrs.GetChild(OpenedUITrs.childCount - 1);
@@ -113,30 +118,7 @@ public class UIManager : Singleton<UIManager>
 
     public void CloseAllUI()
     {
-        while(_frontUI)
+        while (_frontUI)
             CloseFrontUI();
     }
-
-    #region Test
-    UI_Test testUI;
-
-    public void SpawnTestUI()
-    {
-        UIBaseData data = new UIBaseData();
-
-        testUI = OpenUI<UI_Test>(data, OpenedUITrs);
-    }
-
-    public void SpawnTest2UI()
-    {
-        UIBaseData data = new UIBaseData();
-
-        OpenUI<UI_Test2>(data, OpenedUITrs);
-    }
-
-    public void CloseTestUI()
-    {        
-        CloseUI(testUI);
-    }    
-    #endregion
 }
