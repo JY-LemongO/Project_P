@@ -6,10 +6,7 @@ using UnityEngine;
 public class UIBaseData
 {
     public Action onShow;
-    public Action onHide;
-
-    public int dev_Id;
-    public string dev_Name;
+    public Action onHide;    
 }
 
 public class UIBase : MonoBehaviour
@@ -42,9 +39,6 @@ public class UIBase : MonoBehaviour
 
         this.onShow = data.onShow;
         this.onHide = data.onHide;
-
-        this.dev_Id = data.dev_Id;
-        this.dev_Name = data.dev_Name;
     }
 
     private void OnDisable()
