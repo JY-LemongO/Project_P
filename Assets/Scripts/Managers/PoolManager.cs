@@ -1,6 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 // 실제 오브젝트가 들어있는 풀.
@@ -12,20 +13,12 @@ public class ObjectPool
 
     private const int INIT_CREATE_COUNT = 3;
 
-    public void Init(Transform rootTrs, string originPath)
+    public void Init(ResourceType resourceType, string originPath)
     {
-        // Prefabs 폴더 안에 다 집어넣지도 않을 뿐더러 종류에 따라 폴더가 다 다르기 때문에 개선필수.
-        _originPrefab = Resources.Load<GameObject>($"Prefabs/{originPath}");
+        _originPrefab = ResourceManager.Instance.Load<GameObject>(resourceType, originPath);
 
         for (int i = 0; i < INIT_CREATE_COUNT; i++)
-        {
-            // 가능하다면 만든 직후에 IPoolableObject 인터페이스의 ReturnPool 호출하는 쪽으로 설계
-
-            GameObject go = Object.Instantiate(_originPrefab, rootTrs);
-            go.gameObject.SetActive(false);
-
-            _objectQueue.Enqueue(go);
-        }
+            Create();
     }
 
     public GameObject Pop()
@@ -50,7 +43,8 @@ public class ObjectPool
 
     public void Create()
     {
-        GameObject go = Object.Instantiate(_originPrefab, PoolManager.Instance.DisableObjTrs);
+        GameObject go = UnityEngine.Object.Instantiate(_originPrefab, PoolManager.Instance.DisableObjTrs);
+        go.name = _originPrefab.name;
         go.SetActive(false);
 
         _objectQueue.Enqueue(go);
@@ -78,36 +72,35 @@ public class PoolManager : Singleton<PoolManager>
     // Key == 프리팹의 이름
     private Dictionary<string, ObjectPool> _poolDict = new Dictionary<string, ObjectPool>();
 
-    public GameObject Get(string path)
+    public GameObject Get(GameObject go)
     {
+        string key = go.name;
         GameObject obj = null;
 
-        if (!_poolDict.ContainsKey(path))
+        if (!_poolDict.ContainsKey(key))
         {
-            CreatePool(path);
+            IPoolableObject poolableObject = go.GetComponent<IPoolableObject>();
+            CreatePool(poolableObject, key);
         }
 
-        obj = _poolDict[path].Pop();
+        obj = _poolDict[key].Pop();
         obj.transform.SetParent(ActiveObjTrs);
-        obj.SetActive(true);        
+        obj.SetActive(true);
 
         return obj;
     }
 
-    public void ReturnToPool(GameObject obj)
-    {        
-        int index = obj.name.IndexOf("(");
-        string key = obj.name.Substring(0, index);
-
-        _poolDict[key].Push(obj);
+    public void ReturnToPool(GameObject go)
+    {
+        _poolDict[go.name].Push(go);
     }
 
-    private void CreatePool(string path)
+    private void CreatePool(IPoolableObject poolableObject, string key)
     {
         ObjectPool pool = new ObjectPool();
-        pool.Init(DisableObjTrs, path);
+        pool.Init(poolableObject.ResourceType, key);
 
-        _poolDict.Add(path, pool);
+        _poolDict.Add(key, pool);
     }
 
     public override void Clear()

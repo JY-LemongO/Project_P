@@ -12,22 +12,22 @@ public class ObjectPoolTest : MonoBehaviour
 
     public void Spawn_Circle()
     {
-        objects.Add(PoolManager.Instance.Get(circlePath));        
+        objects.Add(ResourceManager.Instance.Instantiate(ResourceType.TestObject, circlePath, isPooling: true));
     }
 
     public void Spawn_Square()
     {
-        objects.Add(PoolManager.Instance.Get(squarePath));        
+        objects.Add(ResourceManager.Instance.Instantiate(ResourceType.TestObject, squarePath, isPooling: true));
     }
 
     public void Spawn_Triangle()
     {
-        objects.Add(PoolManager.Instance.Get(trianglePath));        
+        objects.Add(ResourceManager.Instance.Instantiate(ResourceType.TestObject, trianglePath, isPooling: true));
     }
 
     public void DispawnAllObjects()
     {
         foreach (GameObject obj in objects)
-            PoolManager.Instance.ReturnToPool(obj);        
+            PoolManager.Instance.ReturnToPool(obj);
     }
 }

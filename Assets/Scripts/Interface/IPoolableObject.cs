@@ -4,5 +4,6 @@ using UnityEngine;
 
 public interface IPoolableObject
 {
+    ResourceType ResourceType { get; }
     void ReturnToPool();
 }

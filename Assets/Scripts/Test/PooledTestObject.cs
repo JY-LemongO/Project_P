@@ -5,6 +5,9 @@ using UnityEngine;
 public class PooledTestObject : MonoBehaviour, IPoolableObject
 {
     public float speed;
+    public ResourceType resourceType;
+
+    public ResourceType ResourceType => resourceType;
 
     private void Update()
     {
