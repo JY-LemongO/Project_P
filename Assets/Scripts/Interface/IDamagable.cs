@@ -13,5 +13,6 @@ public enum DamagableType
 public interface IDamagable
 {
     DamagableType DamagableType { get; }
+    Transform Transform { get; }
     void GetDamage(float damage);
 }

@@ -56,7 +56,7 @@ public class UIManager : Singleton<UIManager>
     }
 
     // T Type UIBase를 활성화    
-    public T OpenUI<T>(UIBaseData data, Transform anchor) where T : UIBase
+    public T OpenUI<T>(UIBaseData data, Transform anchor = null) where T : UIBase
     {
         // 이미 열려져 있는가?
         bool isOpened = false;
@@ -69,6 +69,9 @@ public class UIManager : Singleton<UIManager>
             _openedUIDict.Add(uiType, ui);
             _frontIndex++;
         }
+
+        if (anchor == null)
+            anchor = OpenedUITrs;
 
         // 같은 UI를 쓰더라도 들어가는 정보는 다르기 때문에 UIData를 받아 넘겨주고 Setup 하도록 한다.        
         _frontUI = ui;
@@ -100,7 +103,7 @@ public class UIManager : Singleton<UIManager>
             return;
         }
 
-        ui.gameObject.SetActive(false);
+        ui.CloseUI();
         ui.transform.SetParent(ClosedUITrs);
         _openedUIDict.Remove(uiType);
         _closedUIDict.Add(uiType, ui);

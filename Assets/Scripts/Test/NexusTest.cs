@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,8 +10,8 @@ public struct NexusData
     public string dev_Name;
 
     public string description;
-    public int hp;
-    public int defense;
+    public float hp;
+    public float defense;
     public int capacity;
 
     public Sprite icon;
@@ -18,14 +19,17 @@ public struct NexusData
 
 public class NexusTest : MonoBehaviour, IDamagable
 {
+    public Action onNexusDestroyed;
+
     public string Description { get; private set; }
     public float Hp { get; private set; }
     public float Defense { get; private set; }
     public int Capacity { get; private set; }
 
-    public DamagableType DamagableType => damagableType;
-    private DamagableType damagableType = DamagableType.Nexus;
+    public Transform Transform => transform;
+    public DamagableType DamagableType => damagableType;    
 
+    private DamagableType damagableType = DamagableType.Nexus;
     private Coroutine _damagingCoroutine;
 
     public void Setup(NexusData data)
@@ -36,12 +40,18 @@ public class NexusTest : MonoBehaviour, IDamagable
         Capacity = data.capacity;
     }
 
+    private void OnDisable()
+    {
+        onNexusDestroyed = null;
+    }
+
     public void GetDamage(float damage)
     {
         if (Hp <= 0)
             return;
 
         Hp = Mathf.Clamp(Hp - damage, 0, int.MaxValue);
+        Debug.Log(Hp);
 
         if(_damagingCoroutine != null)
             StopCoroutine(_damagingCoroutine);
@@ -51,6 +61,8 @@ public class NexusTest : MonoBehaviour, IDamagable
         if(Hp <= 0)
         {
             Debug.Log("넥서스 파괴.");
+            onNexusDestroyed?.Invoke();
+            gameObject.SetActive(false);
         }
     }
 

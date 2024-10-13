@@ -17,33 +17,38 @@ public class UIBase : MonoBehaviour
     public int dev_Id;
     public string dev_Name;
 
+    private RectTransform _rect;
     private bool _isInit = false;
+
+    private void Awake()
+    {
+        Init();
+    }
 
     public virtual void Init()
     {
         if (_isInit)
             return;
 
-        _isInit = true;        
+        _isInit = true;
 
-        RectTransform rect = GetComponent<RectTransform>();
-        rect.localPosition = Vector3.zero;
-        rect.localScale = Vector3.one;
-        rect.offsetMin = Vector2.zero;
-        rect.offsetMax = Vector2.one;        
+        _rect = GetComponent<RectTransform>();        
     }
 
     public virtual void Setup(UIBaseData data, Transform anchor)
     {
         transform.SetParent(anchor);
+        _rect.localPosition = Vector3.zero;
 
         this.onShow = data.onShow;
         this.onHide = data.onHide;
     }
 
-    private void OnDisable()
+    public virtual void CloseUI()
     {
         onShow = null;
         onHide = null;
+
+        gameObject.SetActive(false);
     }
 }

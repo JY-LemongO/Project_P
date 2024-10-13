@@ -9,6 +9,7 @@ public enum SceneType
     Title,
     Main,
     Play,
+    CombatTestScene,
 }
 
 public class SceneLoader : Singleton<SceneLoader>
@@ -17,6 +18,7 @@ public class SceneLoader : Singleton<SceneLoader>
 
     public void LoadScene(SceneType scene)
     {
+        CloseAllUI();
         SceneManager.LoadScene(scene.ToString());
 
         CurrentScene = scene; // 이건 Scene 클래스에서 해줘야 할 것 같기도 하고~   
@@ -25,6 +27,12 @@ public class SceneLoader : Singleton<SceneLoader>
 
     public void LoadSceneAysnc(SceneType scene)
     {
+        CloseAllUI();
         SceneManager.LoadSceneAsync(scene.ToString());
+    }
+
+    private void CloseAllUI()
+    {
+        UIManager.Instance.CloseAllUI();
     }
 }

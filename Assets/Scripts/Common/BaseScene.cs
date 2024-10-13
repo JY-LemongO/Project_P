@@ -4,5 +4,13 @@ using UnityEngine;
 
 public class BaseScene : MonoBehaviour
 {
+    private void Awake()
+    {
+        Init();
+    }
 
+    protected virtual void Init()
+    {
+
+    }
 }
