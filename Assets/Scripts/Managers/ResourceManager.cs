@@ -18,7 +18,7 @@ public class ResourceManager : Singleton<ResourceManager>
     // [To Do]
     // 1. Resources.Load 버전
     // 2. Addressable 버전
-
+    //github desktop 연동 테스트
     private Dictionary<string, UnityEngine.Object> _loadedResourceDict = new Dictionary<string, UnityEngine.Object>();
 
     private const string RESOURCES_LOAD_PATH = "Prefabs";
