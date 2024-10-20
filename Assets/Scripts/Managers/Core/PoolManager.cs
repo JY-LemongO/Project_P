@@ -53,6 +53,7 @@ public class ObjectPool
     {
         obj.SetActive(false);
         obj.transform.SetParent(PoolManager.Instance.DisableObjTrs);
+        obj.transform.position = Vector3.right * 100;
 
         _objectQueue.Enqueue(obj);
     }

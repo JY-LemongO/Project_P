@@ -5,7 +5,7 @@ using UnityEngine;
 public enum DamagableType
 {
     Nexus,
-    WildAnimal,
+    Enemy,
     Player,
     Ally,
 }
