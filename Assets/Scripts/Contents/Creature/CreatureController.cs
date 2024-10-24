@@ -111,6 +111,7 @@ public class CreatureController : MonoBehaviour
         if (state != State.Attack && AttackCoroutine != null)
         {
             StopCoroutine(AttackCoroutine);
+            AttackCoroutine = null;
             Debug.Log("Attack Coroutine Stopped");
         }
     }

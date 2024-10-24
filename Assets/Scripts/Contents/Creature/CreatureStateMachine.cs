@@ -23,8 +23,7 @@ public abstract class CreatureStateMachine : MonoBehaviour
         private set
         {
             _currentStateEnum = value;
-            onStateChanged?.Invoke(_currentStateEnum);
-            Debug.Log(_currentState);
+            onStateChanged?.Invoke(_currentStateEnum);            
         }
     }
 
@@ -40,7 +39,7 @@ public abstract class CreatureStateMachine : MonoBehaviour
     public void Init()
     {
         Context = GetComponent<Creature>();
-
+        
         Initialize();
         SetState(State.Idle);
     }

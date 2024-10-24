@@ -9,7 +9,7 @@ public class AllyController : CreatureController
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (_attackCoroutine != null)
+        if (AttackCoroutine != null)
             return;
 
         if (collision.bounds.Intersects(_detectionCollider.bounds))
@@ -24,8 +24,14 @@ public class AllyController : CreatureController
                 if (damagable.DamagableType != DamagableType.Enemy)
                     return;
 
+                Debug.Log("걸리긴 걸림?");
+
                 if (_target != damagable)
+                {
                     _target = damagable;
+                    Debug.Log("새로운 타겟");
+                }
+                    
 
                 _context.StateMachine.IsInRange = true;
             }
