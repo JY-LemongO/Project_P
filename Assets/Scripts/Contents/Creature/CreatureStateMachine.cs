@@ -13,7 +13,7 @@ public enum State
 public abstract class CreatureStateMachine : MonoBehaviour
 {
     #region Events
-    public event Action<State> onStateChanged;
+    public Action<State> onStateChanged;
     #endregion
 
     public Creature Context { get; private set; }
@@ -22,20 +22,20 @@ public abstract class CreatureStateMachine : MonoBehaviour
         get => _currentStateEnum;
         private set
         {
-            State prevState = _currentStateEnum;
             _currentStateEnum = value;
-            onStateChanged?.Invoke(prevState);
+            onStateChanged?.Invoke(_currentStateEnum);
+            Debug.Log(_currentState);
         }
     }
 
     public bool IsInRange;
     public bool IsMoveToTarget;
     public bool IsAttack;
-    public bool IsDead => Context.IsDead;    
+    public bool IsDead => Context.IsDead;
 
     protected Dictionary<State, IState> _stateStorage = new Dictionary<State, IState>();
     protected IState _currentState;
-    protected State _currentStateEnum;    
+    protected State _currentStateEnum;
 
     public void Init()
     {
@@ -44,17 +44,15 @@ public abstract class CreatureStateMachine : MonoBehaviour
         Initialize();
         SetState(State.Idle);
     }
-    
+
     protected abstract void Initialize();
 
     private void Update()
     {
-        _currentState.UpdateState();        
-    }
+        if (!Context.IsInit)
+            return;
 
-    private void OnDisable()
-    {
-        onStateChanged = null;
+        _currentState.UpdateState();
     }
 
     public void UpdateState()
@@ -72,7 +70,7 @@ public abstract class CreatureStateMachine : MonoBehaviour
         }
 
         CurrentState = state;
-        IState newState = _stateStorage[state];        
+        IState newState = _stateStorage[state];
 
         if (_currentState == null)
         {

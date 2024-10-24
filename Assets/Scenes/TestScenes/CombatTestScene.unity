@@ -733,7 +733,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.24644002, g: 0.735849, b: 0.39918992, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -753,7 +753,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -2, z: 0}
-  m_LocalScale: {x: 10, y: 1, z: 1}
+  m_LocalScale: {x: 30, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1726609273}
@@ -804,19 +804,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 6393696365954749113, guid: 9b5e7b45305864a4e834b3549606fa8c, type: 3}
-  enemySpawnPoint: {x: -3, y: 0, z: 0}
+  enemySpawnPoint: {x: -6, y: 0, z: 0}
   allyPrefab: {fileID: 6033207488311625383, guid: 59948d3dc3f7a3041b4664236aef91d9, type: 3}
-  allySpawnPoint: {x: 2, y: 0, z: 0}
+  allySpawnPoint: {x: 0, y: 0, z: 0}
   tempAllyCreatureDatas:
   - dev_Id: 10001
     dev_Name: Temp_Ally1
-    hp: 10
+    hp: 20
     attack: 2
     defense: 0
     speed: 1
     atkRate: 1
-    animController: {fileID: 0}
-    sprite: {fileID: 21300000, guid: 27428f826bad840f9bdbc88d5dcbfa6c, type: 3}
+    animController: {fileID: 22100000, guid: f9320c229d55995479b2139249f281b7, type: 2}
+    sprite: {fileID: -767250463, guid: 51bfaded71c4bb646a4f96010c5a76cd, type: 3}
   - dev_Id: 10002
     dev_Name: Temp_Ally2
     hp: 20
@@ -838,7 +838,7 @@ MonoBehaviour:
   tempEnemyCreatureDatas:
   - dev_Id: 20001
     dev_Name: Temp_Enemy1
-    hp: 1
+    hp: 20
     attack: 1
     defense: 0
     speed: 3
@@ -1478,7 +1478,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -23.450012, y: -53.31006}
+  m_AnchoredPosition: {x: -23.449951, y: -53.31006}
   m_SizeDelta: {x: 200, y: 85}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &2099434672

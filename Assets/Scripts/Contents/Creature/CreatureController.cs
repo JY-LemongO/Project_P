@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -9,9 +10,18 @@ public class CreatureController : MonoBehaviour
     // [To Do]
     // 움직이는 로직은 여기서 하기
     // Ally와 Enemy 세부 로직은 상속받아서 하기
-    // Creature와 상호의존 관계는 피하고.. 능력치를 Creature에서 받아와서 쓰기..?
+    // Creature와 상호의존 관계는 피하고.. 능력치를 Creature에서 받아와서 쓰기..?    
 
     public IDamagable Target => _target;
+    public Coroutine AttackCoroutine
+    {
+        get => _attackCoroutine;
+        private set
+        {
+            _attackCoroutine = value;
+            SearchNewTarget();
+        }        
+    }
 
     protected Rigidbody2D _rigid;
     protected SpriteRenderer _rend;
@@ -19,21 +29,17 @@ public class CreatureController : MonoBehaviour
 
     protected IDamagable _target;
 
-    private Coroutine _attackCoroutine;
-
-    private void Awake()
-    {
-
-    }
+    protected Coroutine _attackCoroutine;
 
     public void Init()
     {
+        Debug.Log("Init 몇 번 발동?");
         _rigid = GetComponent<Rigidbody2D>();
         _rend = GetComponent<SpriteRenderer>();
         _context = GetComponent<Creature>();
 
-        _context.StateMachine.onStateChanged += CheckStopAttack;
         _context.StateMachine.onStateChanged += HandleAttack;
+        _context.StateMachine.onStateChanged += CheckStopAttack;
     }
 
     // [To Do]
@@ -44,6 +50,9 @@ public class CreatureController : MonoBehaviour
 
     private void Update()
     {
+        if (!_context.IsInit)
+            return;
+
         if (_context.StateMachine.IsDead) return;
 
         HandleIdle();
@@ -73,7 +82,6 @@ public class CreatureController : MonoBehaviour
             return;
         }
 
-
         float moveDirX = Mathf.Sign(_target.Transform.position.x - transform.position.x);
         _rigid.velocity = new Vector2(moveDirX * _context.Speed, _rigid.velocity.y);
 
@@ -84,49 +92,31 @@ public class CreatureController : MonoBehaviour
     {
         if (state != State.Attack) return;
 
-        _attackCoroutine = StartCoroutine(Co_Attack());
+        AttackCoroutine = StartCoroutine(Co_Attack());
     }
 
     private IEnumerator Co_Attack()
     {
-        Debug.Log("Handle Attack...");
-        yield return new WaitForSeconds(_context.AtkRate);
+        while (true)
+        {
+            Debug.Log("Handle Attack...");            
+            _target.GetDamage(_context.Attack);
+
+            yield return new WaitForSeconds(_context.AtkRate);
+        }        
     }
 
     private void CheckStopAttack(State state)
     {
-        if (state != State.Attack && _attackCoroutine != null)
+        if (state != State.Attack && AttackCoroutine != null)
         {
-            StopCoroutine(_attackCoroutine);
+            StopCoroutine(AttackCoroutine);
             Debug.Log("Attack Coroutine Stopped");
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void SearchNewTarget()
     {
-        if (collision.TryGetComponent(out IDamagable damagable))
-        {
-            if (damagable.DamagableType == DamagableType.Enemy)
-                return;
 
-            if (_target != damagable)
-                _target = damagable;
-
-            _context.StateMachine.IsInRange = true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.TryGetComponent(out IDamagable damagable))
-        {
-            if (damagable.DamagableType == DamagableType.Enemy)
-                return;
-
-            if (_target == damagable)
-                _target = null;
-
-            _context.StateMachine.IsInRange = false;
-        }
     }
 }

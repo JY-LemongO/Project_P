@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum CreatureType
 {
@@ -41,11 +42,20 @@ public class Creature : MonoBehaviour, IDamagable, IPoolableObject
     public ResourceType ResourceType => ResourceType.TestObject;
 
     public bool IsDead => _hp <= 0;
+    public bool IsInit => _isInit;    
 
     protected DamagableType _damagableType;
 
     #region Stats    
-    public float Hp => _hp;
+    public float Hp
+    {
+        get => _hp;
+        private set
+        {
+            _hp = value;
+            onHealthChanged?.Invoke(value);
+        }
+    }
     public float Attack => _attack;
     public float Defense => _defense;
     public float Speed => _speed;
@@ -59,6 +69,10 @@ public class Creature : MonoBehaviour, IDamagable, IPoolableObject
     [SerializeField] protected float _defense;
     [SerializeField] protected float _speed;
     [SerializeField] protected float _atkRate;
+    #endregion
+
+    #region UI
+    [SerializeField] Slider _hpSlider;
     #endregion
 
     private SpriteRenderer _rend;
@@ -83,9 +97,15 @@ public class Creature : MonoBehaviour, IDamagable, IPoolableObject
         StateMachine.Init();
     }
 
+    private void TestDebugInfo()
+    {
+        Debug.Log($"CurrentStat:: hp:{_hp}, maxHp:{_maxHp}, attack:{_attack}");
+    }
+
     public virtual void Setup(CreatureData data)
     {
         _hp = data.hp;
+        _maxHp = data.hp;
         _attack = data.attack;
         _defense = data.defense;
         _speed = data.speed;
@@ -93,26 +113,30 @@ public class Creature : MonoBehaviour, IDamagable, IPoolableObject
 
         _anim.runtimeAnimatorController = data.animController;
         _rend.sprite = data.sprite;
+
+        HpBarUpdate();
+        TestDebugInfo();
     }
 
     public void GetDamage(float damage)
     {
-        if (!IsDead)
+        if (IsDead)
             return;
 
         // [To Do]
         // 1. Hit sound
-        _hp = Mathf.Clamp(_hp - damage, 0, int.MaxValue);
-        onHealthChanged?.Invoke(_hp);
+        Debug.Log("맞았음");
+        Hp = Mathf.Clamp(_hp - damage, 0, int.MaxValue);
+        HpBarUpdate();
 
-        if (_hp <= 0)
+        if (Hp <= 0)
             Dead();
     }
 
+    private void HpBarUpdate() => _hpSlider.value = _hp / _maxHp;
+
     protected virtual void Dead()
     {
-        onHealthChanged = null;
-
         _hp = 0;
         _maxHp = 0;
         _attack = 0;
